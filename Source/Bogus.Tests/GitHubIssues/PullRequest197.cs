@@ -1,11 +1,10 @@
-﻿using System.Runtime.CompilerServices;
-using Bogus.DataSets;
+﻿using Bogus.DataSets;
 using FluentAssertions;
 using Xunit;
 
 namespace Bogus.Tests.GitHubIssues
 {
-   public class PullRequest197
+   public class PullRequest197 : SeededTest
    {
       public class Internet2 : Internet
       {

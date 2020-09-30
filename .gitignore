@@ -9,6 +9,7 @@
 /Source/packages**
 paket.lock
 .fake
+.store
 .paket/paket.exe
 /Source/.paket/**
 __test
@@ -170,3 +171,4 @@ $RECYCLE.BIN/
 .DS_Store
 /nuget.push.bat
 
+/Source/Benchmark/BenchmarkDotNet.Artifacts/

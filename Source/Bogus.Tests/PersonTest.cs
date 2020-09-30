@@ -10,6 +10,7 @@ using Bogus.Extensions.UnitedStates;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
+using Z.ExtensionMethods.ObjectExtensions;
 
 namespace Bogus.Tests
 {
@@ -49,7 +50,7 @@ namespace Bogus.Tests
       public void check_ssn_on_person()
       {
          var p = new Person();
-         p.Ssn().Should().Be("869-28-7971");
+         p.Ssn().Should().Be("771-62-9016");
       }
 
       [Fact]
@@ -95,6 +96,54 @@ namespace Bogus.Tests
                "629.400.035-13",
                "658.676.631-16",
                "792.478.139-05"
+            };
+
+         obtained.Should().Equal(expect);
+      }
+
+      [Fact]
+      public void can_generate_cpf_for_brazil_without_formatting()
+      {
+         var obtained = Get(10, p => p.Cpf(includeFormatSymbols: false));
+
+         console.Dump(obtained);
+
+         var expect = new[]
+            {
+               "86928797118",
+               "59526934580",
+               "79830732916",
+               "88584412301",
+               "81854283529",
+               "96398934040",
+               "00647515709",
+               "62940003513",
+               "65867663116",
+               "79247813905"
+            };
+
+         obtained.Should().Equal(expect);
+      }
+
+      [Fact]
+      public void can_generate_numeric_cpf_for_brazil()
+      {
+         var obtained = Get(10, p => p.Cpf(includeFormatSymbols: false).ToULong());
+
+         console.Dump(obtained);
+
+         var expect = new ulong[]
+            {
+               86928797118,
+               59526934580,
+               79830732916,
+               88584412301,
+               81854283529,
+               96398934040,
+               00647515709,
+               62940003513,
+               65867663116,
+               79247813905
             };
 
          obtained.Should().Equal(expect);
@@ -149,7 +198,7 @@ namespace Bogus.Tests
          );
          console.WriteLine(emails.DumpString());
       }
-      
+
       [Fact]
       public void person_has_full_name()
       {
@@ -181,13 +230,13 @@ namespace Bogus.Tests
          p1.Gender.Should().Be(p2.Gender);
          p1.Website.Should().Be(p2.Website);
 
-         p1.ShouldBeEquivalentTo(p2);
+         p1.Should().BeEquivalentTo(p2);
 
          Date.SystemClock = () => DateTime.Now;
       }
-      
 
-      IEnumerable<string> Get(int times, Func<Person, string> a)
+
+      IEnumerable<T> Get<T>(int times, Func<Person, T> a)
       {
          return Enumerable.Range(0, times)
             .Select(i =>

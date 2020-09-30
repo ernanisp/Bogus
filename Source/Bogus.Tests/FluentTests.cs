@@ -29,7 +29,9 @@ namespace Bogus.Tests
             .RuleFor(o => o.Item, f => f.PickRandom(fruit))
             //A random quantity from 1 to 10
             .RuleFor(o => o.Quantity, f => f.Random.Number(1, 10));
-
+            //A nullable int? with 80% probability of being null.
+            //The .OrNull extension is in the Bogus.Extensions namespace.
+            //.RuleFor(o => o.LotNumber, f => f.Random.Int(0, 100).OrNull(f, .8f));
 
          var userIds = 0;
          var testUsers = new Faker<User>()
@@ -197,7 +199,7 @@ namespace Bogus.Tests
                   .RuleForType(typeof(int), f => f.Random.Word());
             };
 
-         action.ShouldThrow<ArgumentException>();
+         action.Should().Throw<ArgumentException>();
       }
 
       [Fact]
@@ -256,6 +258,7 @@ namespace Bogus.Tests
          public int OrderId { get; set; }
          public string Item { get; set; }
          public int Quantity { get; set; }
+         //public int? LotNumber { get; set; }
       }
 
       public enum Gender

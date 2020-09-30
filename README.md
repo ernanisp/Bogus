@@ -1,5 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/dxa14myphnlbplc6/branch/master?svg=true)](https://ci.appveyor.com/project/bchavez/bogus)  [![Twitter](https://img.shields.io/twitter/url/https/github.com/bchavez/Bogus.svg?style=social)](https://twitter.com/intent/tweet?text=Simple%20and%20Sane%20Fake%20Data%20Generator%20for%20.NET:&amp;amp;url=https%3A%2F%2Fgithub.com%2Fbchavez%2FBogus) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bchavez/Bogus) <a href="http://www.jetbrains.com/resharper"><img src="http://i61.tinypic.com/15qvwj7.jpg" alt="ReSharper" title="ReSharper"></a>
-<img src="https://raw.githubusercontent.com/bchavez/Bogus/master/Docs/logo.png" align='right' />
+[![Downloads](https://img.shields.io/nuget/dt/Bogus.svg)](https://www.nuget.org/packages/Bogus/) [![Build status](https://ci.appveyor.com/api/projects/status/dxa14myphnlbplc6/branch/master?svg=true)](https://ci.appveyor.com/project/bchavez/bogus)  [![Twitter](https://img.shields.io/twitter/url/https/github.com/bchavez/Bogus.svg?style=social)](https://twitter.com/intent/tweet?text=Simple%20and%20Sane%20Fake%20Data%20Generator%20for%20.NET:&amp;amp;url=https%3A%2F%2Fgithub.com%2Fbchavez%2FBogus) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bchavez/Bogus) <img src="https://raw.githubusercontent.com/bchavez/Bogus/master/Docs/logo.png" align='right' />
 
 Bogus for .NET: C#, F#, and VB.NET
 ======================
@@ -31,12 +30,14 @@ Minimum Requirements: **.NET Standard 1.3** or **.NET Standard 2.0** or **.NET F
     * [**Microsoft Teams Sample Connector**](https://github.com/OfficeDev/microsoft-teams-sample-connector-csharp) [[code]](https://github.com/OfficeDev/microsoft-teams-sample-connector-csharp/blob/8805bb1acb136949905e4644c4e714dd7b70a61a/TeamsToDoAppConnector/Utils/TaskHelper.cs)
 
 ##### Featured In
-* [**Microsoft Build 2018 - Azure Tips and Tricks - May 8th, 2018**](https://www.youtube.com/watch?v=088e5IUqF6g&t=12m31s)
-* **NuGet Must Haves - [Top 10 Unit Testing Libraries in 2017](http://nugetmusthaves.com/article/top-unit-testing-libraries)**
-* **[.NET Rocks Podcast - #BetterKnowThatFramework - March 16th 2017](https://twitter.com/bchavez/status/842479138850070528)** & **[Sept. 13th, 2018](https://twitter.com/bchavez/status/1040479669743628290)**
+* [**Microsoft Docs: Modernize a WPF app tutorial - Aug. 2nd, 2019**](https://docs.microsoft.com/en-us/windows/apps/desktop/modernize/modernize-wpf-tutorial-1#configure-nuget-packages-and-dependencies)
+* [**Microsoft Build 2018: Azure Tips and Tricks - May 8th, 2018**](https://www.youtube.com/watch?v=088e5IUqF6g&t=12m31s)
+* **[NuGet Must Haves: Top 10 Unit Testing Libraries in 2017](http://nugetmusthaves.com/article/top-unit-testing-libraries)**
+* **[.NET Rocks Podcast: #BetterKnowThatFramework - Mar. 16th 2017](https://twitter.com/bchavez/status/842479138850070528)**, **[Sep. 13th, 2018](https://twitter.com/bchavez/status/1040479669743628290)**, and **[May 7th, 2020](https://twitter.com/bchavez/status/1264047877245988864)**
 * **[.NET Engineering Blog: NuGet Package of the week #1. - "This week in .NET - December 8th 2015"](https://blogs.msdn.microsoft.com/dotnet/2015/12/08/the-week-in-net-12082015/)**
 
 ##### Blog Posts
+* [Nick Chapsas](https://twitter.com/nickchapsas) - [Generating realistic fake data in .NET using Bogus [YouTube]](https://www.youtube.com/watch?v=T9pwE1GAr_U)
 * [Jack Histon](https://twitter.com/jackhiston) - [How to Create Bogus Data in C#](http://jackhiston.com/2017/10/1/how-to-create-bogus-data-in-c/)
 * [Christos Matskas](https://twitter.com/christosmatskas) - [Creating .NET fakes using Bogus](https://cmatskas.com/creating-net-fakes-using-bogus-2/)
 * [Jason Roberts](https://twitter.com/robertsjason) - [Lifelike Test Data Generation with Bogus](http://dontcodetired.com/blog/post/Lifelike-Test-Data-Generation-with-Bogus)
@@ -44,6 +45,8 @@ Minimum Requirements: **.NET Standard 1.3** or **.NET Standard 2.0** or **.NET F
 * [.NET Core Generating Test Data](https://coderulez.wordpress.com/2017/05/10/net-core-generating-test-data/)
 * Steve Leigh - [Seedy Fake Users](http://stevesspace.com/2017/01/seedy-fake-users/)
 * Dominik Roszkowski - [Bogus fake data generator in .Net testing](http://dominikroszkowski.pl/2017/07/bogus-in-testing/)
+* [Volkan Paksoy](https://twitter.com/volkan_paksoy) - [Generating Test Data with Bogus](https://volkanpaksoy.com/archive/2019/06/27/Generating-Test-Data-with-Bogus/)
+* Alican Demirtas - [Bogus on F#](https://www.compositional-it.com/news-blog/bogus-on-f/)
 
 ##### The Crypto Tip Jar!
 <a href="https://commerce.coinbase.com/checkout/2faa393a-6fc3-4365-993a-6cc110bc4d35"><img src="https://raw.githubusercontent.com/bchavez/Bogus/master/Docs/tipjar.png" /></a>
@@ -76,7 +79,10 @@ var testOrders = new Faker<Order>()
     //Pick some fruit from a basket
     .RuleFor(o => o.Item, f => f.PickRandom(fruit))
     //A random quantity from 1 to 10
-    .RuleFor(o => o.Quantity, f => f.Random.Number(1, 10));
+    .RuleFor(o => o.Quantity, f => f.Random.Number(1, 10))
+    //A nullable int? with 80% probability of being null.
+    //The .OrNull extension is in the Bogus.Extensions namespace.
+    .RuleFor(o => o.LotNumber, f => f.Random.Int(0, 100).OrNull(f, .8f));
 
 
 var userIds = 0;
@@ -166,30 +172,31 @@ public void With_Korean_Locale()
 
 | Locale Code    | Language                | | Locale Code    | Language                 |
 |:--------------:|:-----------------------:|-|:--------------:|:------------------------:|
-|`af_ZA         `|South Africa (Afrikaans)  ||`ge            `|Georgian                  |
-|`ar            `|Arabic                    ||`id_ID         `|Indonesia                 |
-|`az            `|Azerbaijani               ||`it            `|Italian                   |
-|`cz            `|Czech                     ||`ja            `|Japanese                  |
-|`de            `|German                    ||`ko            `|Korean                    |
-|`de_AT         `|German (Austria)          ||`lv            `|Latvian                   |
-|`de_CH         `|German (Switzerland)      ||`nb_NO         `|Norwegian                 |
-|`el            `|Greek                     ||`nep           `|Nepalese                  |
-|`en            `|English                   ||`nl            `|Dutch                     |
-|`en_AU         `|Australia (English)       ||`nl_BE         `|Dutch (Belgium)           |
-|`en_au_ocker   `|Australia Ocker (English) ||`pl            `|Polish                    |
-|`en_BORK       `|Bork (English)            ||`pt_BR         `|Portuguese (Brazil)       |
-|`en_CA         `|Canada (English)          ||`pt_PT         `|Portuguese (Portugal)     |
-|`en_GB         `|Great Britain (English)   ||`ro            `|Romanian                  |
-|`en_IE         `|Ireland (English)         ||`ru            `|Russian                   |
-|`en_IND        `|India (English)           ||`sk            `|Slovakian                 |
-|`en_US         `|United States (English)   ||`sv            `|Swedish                   |
-|`en_ZA         `|South Africa (English)    ||`tr            `|Turkish                   |
-|`es            `|Spanish                   ||`uk            `|Ukrainian                 |
-|`es_MX         `|Spanish Mexico            ||`vi            `|Vietnamese                |
-|`fa            `|Farsi                     ||`zh_CN         `|Chinese                   |
+|`af_ZA         `|Afrikaans                 ||`fr_CH         `|French (Switzerland)      |
+|`ar            `|Arabic                    ||`ge            `|Georgian                  |
+|`az            `|Azerbaijani               ||`hr            `|Hrvatski                  |
+|`cz            `|Czech                     ||`id_ID         `|Indonesia                 |
+|`de            `|German                    ||`it            `|Italian                   |
+|`de_AT         `|German (Austria)          ||`ja            `|Japanese                  |
+|`de_CH         `|German (Switzerland)      ||`ko            `|Korean                    |
+|`el            `|Greek                     ||`lv            `|Latvian                   |
+|`en            `|English                   ||`nb_NO         `|Norwegian                 |
+|`en_AU         `|English (Australia)       ||`nep           `|Nepalese                  |
+|`en_au_ocker   `|English (Australia Ocker) ||`nl            `|Dutch                     |
+|`en_BORK       `|English (Bork)            ||`nl_BE         `|Dutch (Belgium)           |
+|`en_CA         `|English (Canada)          ||`pl            `|Polish                    |
+|`en_GB         `|English (Great Britain)   ||`pt_BR         `|Portuguese (Brazil)       |
+|`en_IE         `|English (Ireland)         ||`pt_PT         `|Portuguese (Portugal)     |
+|`en_IND        `|English (India)           ||`ro            `|Romanian                  |
+|`en_NG         `|Nigeria (English)         ||`ru            `|Russian                   |
+|`en_US         `|English (United States)   ||`sk            `|Slovakian                 |
+|`en_ZA         `|English (South Africa)    ||`sv            `|Swedish                   |
+|`es            `|Spanish                   ||`tr            `|Turkish                   |
+|`es_MX         `|Spanish (Mexico)          ||`uk            `|Ukrainian                 |
+|`fa            `|Farsi                     ||`vi            `|Vietnamese                |
+|`fi            `|Finnish                   ||`zh_CN         `|Chinese                   |
 |`fr            `|French                    ||`zh_TW         `|Chinese (Taiwan)          |
-|`fr_CA         `|Canada (French)           ||`zu_ZA         `|South Africa (Zulu)       |
-|`fr_CH         `|French (Switzerland)      ||||
+|`fr_CA         `|French (Canada)           ||`zu_ZA         `|Zulu (South Africa)       |
 
 
 ***Note:*** Some locales may not have a complete data set. For example, [`zh_CN`](https://github.com/Marak/faker.js/tree/master/lib/locales/zh_CN) does not have a `lorem` data set, but [`ko`](https://github.com/Marak/faker.js/tree/master/lib/locales/ko) has a `lorem` data set. **Bogus** will default to `en` if a *locale-specific* data set is not found. To further illustrate the previous example, the missing `zh_CN:lorem` data set will default to the `en:lorem` data set.
@@ -201,54 +208,67 @@ for more info.
 ### Without Fluent Syntax
 
 You can use **Bogus** without a fluent setup. The examples below highlight three alternative ways to use **Bogus** without a fluent syntax setup.
-1. Using the `Faker` facade.
-2. Using **DataSets** directly.
-3. Using `Faker<T>` **inheritance**.
 
-All three alternative styles of using **Bogus** produce the same `Order` result as demonstrated below:
+* Using the `Faker` facade.
+* Using **DataSets** directly.
+* Using `Faker<T>` **inheritance**.
+
+#### Using the `Faker` facade:
 ```csharp
 public void Using_The_Faker_Facade()
 {
-    var faker = new Faker("en");
-    var o = new Order()
-        {
-            OrderId = faker.Random.Number(1, 100),
-            Item = faker.Lorem.Sentence(),
-            Quantity = faker.Random.Number(1, 10)
-        };
-    o.Dump()
+   var faker = new Faker("en");
+   var o = new Order()
+       {
+           OrderId = faker.Random.Number(1, 100),
+           Item = faker.Lorem.Sentence(),
+           Quantity = faker.Random.Number(1, 10)
+       };
+   o.Dump()
 }
+```
+
+#### Using **DataSets** directly:
+```csharp
 public void Using_DataSets_Directly()
 {
-    var random = new Bogus.Randomizer();
-    var lorem = new Bogus.DataSets.Lorem("en");
-    var o = new Order()
-        {
-            OrderId = random.Number(1, 100),
-            Item = lorem.Sentence(),
-            Quantity = random.Number(1, 10)
-        };
-    o.Dump();
+   var random = new Bogus.Randomizer();
+   var lorem = new Bogus.DataSets.Lorem("en");
+   var o = new Order()
+       {
+           OrderId = random.Number(1, 100),
+           Item = lorem.Sentence(),
+           Quantity = random.Number(1, 10)
+       };
+   o.Dump();
 }
+```
+
+#### Using `Faker<T>` inheritance:
+```csharp
+public class OrderFaker : Faker<Order> {
+   public OrderFaker() {
+      RuleFor(o => o.OrderId, f => f.Random.Number(1, 100));
+      RuleFor(o => o.Item, f => f.Lorem.Sentence());
+      RuleFor(o => o.Quantity, f => f.Random.Number(1, 10));
+   }
+}
+
 public void Using_FakerT_Inheritance()
 {
-   public class OrderFaker : Faker<Order> {
-      public OrderFaker() {
-         RuleFor(o => o.OrderId, f => f.Random.Number(1, 100));
-         RuleFor(o => o.Item, f => f.Lorem.Sentence());
-         RuleFor(o => o.Quantity, f => f.Random.Number(1, 10));
-      }
-   }
    var orderFaker = new OrderFaker();
    var o = orderFaker.Generate();
    o.Dump();
 }
-/* OUTPUT:
+```
+
+In the examples above, all three alternative styles of using **Bogus** produce the same `Order` result:
+```
 {
   "OrderId": 61,
   "Item": "vel est ipsa",
   "Quantity": 7
-} */
+}
 ```
 
 ### Bogus API Support
@@ -331,6 +351,7 @@ public void Using_FakerT_Inheritance()
 * **`Images`**
 	* `DataUri` - Get a SVG data URI image with a specific width and height.
 	* `PicsumUrl` - Get an image from the https://picsum.photos service.
+	* `PlaceholderUrl` - Get an image from https://placeholder.com service.
 	* `LoremFlickrUrl` - Get an image from https://loremflickr.com service.
 	* `LoremPixelUrl` - Creates an image URL with http://lorempixel.com. Note: This service is slow. Consider using PicsumUrl() as a faster alternative.
     	* `Abstract` - Gets an abstract looking image.
@@ -351,21 +372,27 @@ public void Using_FakerT_Inheritance()
 	* `Email` - Generates an email address.
 	* `ExampleEmail` - Generates an example email with @example.com.
 	* `UserName` - Generates user names.
+	* `UserNameUnicode` - Generates a user name preserving Unicode characters.
 	* `DomainName` - Generates a random domain name.
 	* `DomainWord` - Generates a domain word used for domain names.
 	* `DomainSuffix` - Generates a domain name suffix like .com, .net, .org
-	* `Ip` - Gets a random IP address.
-	* `Ipv6` - Generates a random IPv6 address.
+	* `Ip` - Gets a random IPv4 address string.
+	* `IpAddress` - Gets a random IPv4 IPAddress type.
+	* `IpEndPoint` - Gets a random IPv4 IPEndPoint.
+	* `Ipv6` - Generates a random IPv6 address string.
+	* `Ipv6Address` - Generate a random IPv6 IPAddress type.
+	* `Ipv6EndPoint` - Gets a random IPv6 IPEndPoint.
 	* `UserAgent` - Generates a random user agent.
 	* `Mac` - Gets a random mac address.
 	* `Password` - Generates a random password.
 	* `Color` - Gets a random aesthetically pleasing color near the base RGB. See [here](http://stackoverflow.com/questions/43044/algorithm-to-randomly-generate-an-aesthetically-pleasing-color-palette).
 	* `Protocol` - Returns a random protocol. HTTP or HTTPS.
 	* `Url` - Generates a random URL.
-	* `UrlWithPath` - Get a random URL with random path.
+	* `UrlWithPath` - Get an absolute URL with random path.
+	* `UrlRootedPath` - Get a rooted URL path like: /foo/bar. Optionally with file extension.
 * **`Lorem`**
 	* `Word` - Get a random lorem word.
-	* `Words` - Get some lorem words
+	* `Words` - Get an array of random lorem words.
 	* `Letter` - Get a character letter.
 	* `Sentence` - Get a random sentence of specific number of words.
 	* `Sentences` - Get some sentences.
@@ -395,6 +422,7 @@ public void Using_FakerT_Inheritance()
 	* `FileName` - Get a random file name.
 	* `DirectoryPath` - Get a random directory path (Unix).
 	* `FilePath` - Get a random file path (Unix).
+	* `CommonFileName` - Generates a random file name with a common file extension.
 	* `MimeType` - Get a random mime type
 	* `CommonFileType` - Returns a commonly used file type.
 	* `CommonFileExt` - Returns a commonly used file extension.
@@ -470,12 +498,16 @@ public void Using_FakerT_Inheritance()
 * **`using Bogus.Extensions.Italy;`**
 	* `Bogus.Person.CodiceFiscale()` - Codice Fiscale
 	* `Bogus.DataSets.Finance.CodiceFiscale()` - Codice Fiscale
+* **`using Bogus.Extensions.Norway;`**
+	* `Bogus.Person.Fødselsnummer()` - Norwegian national identity number
 * **`using Bogus.Extensions.Portugal;`**
 	* `Bogus.Person.Nif()` - Número de Identificação Fiscal (NIF)
 	* `Bogus.DataSets.Company.Nipc()` - Número de Identificação de Pessoa Colectiva (NIPC)
 * **`using Bogus.Extensions.UnitedKingdom;`**
+	* `Bogus.DataSets.Address.CountryOfUnitedKingdom()` - Country of the United Kingdom
 	* `Bogus.DataSets.Finance.SortCode()` - Banking Sort Code
 	* `Bogus.DataSets.Finance.Nino()` - National Insurance Number
+	* `Bogus.DataSets.Vehicle.GbRegistrationPlate()` - GB Vehicle Registration Plate
 * **`using Bogus.Extensions.UnitedStates;`**
 	* `Bogus.Person.Ssn()` - Social Security Number
 	* `Bogus.DataSets.Company.Ein()` - Employer Identification Number
@@ -545,6 +577,15 @@ public void Using_FakerT_Inheritance()
     * `DiagnosisLongDescription` - Get a medical diagnosis description. IE: Meningitis due to coxsackie virus.
     * `DiagnosisShortDescription` - Get a short description of a medical diagnosis.
     * `ProcedureCode` - Get a ICD9 procedure code.
+    * `ProcedureEntry` - Get a medical procedure.
+    * `ProcedureLongDescription` - Get a medical procedure description.
+    * `ProcedureShortDescription` - Get a short description of a medical procedure.
+  * **`Icd10`**
+    * `DiagnosisCode` - Get a ICD10 diagnosis code.
+    * `DiagnosisEntry` - Get a medical diagnosis.
+    * `DiagnosisLongDescription` - Get a medical diagnosis description. IE: Meningitis due to coxsackie virus.
+    * `DiagnosisShortDescription` - Get a short description of a medical diagnosis.
+    * `ProcedureCode` - Get a ICD10 procedure code.
     * `ProcedureEntry` - Get a medical procedure.
     * `ProcedureLongDescription` - Get a medical procedure description.
     * `ProcedureShortDescription` - Get a short description of a medical procedure.
@@ -638,7 +679,7 @@ public void Create_an_SSN()
     code.Dump();
 
     var serial = new Randomizer().Replace("**-****");
-    code.Dump();
+    serial.Dump();
 }
 /* OUTPUT:
 "618-19-3064"
@@ -895,7 +936,7 @@ Order MakeOrder(int seed){
 
 var orders = Enumerable.Range(1,5)
    .Select(MakeOrder)
-   .ToList();;
+   .ToList();
 
 orders.Dump();
 ````
@@ -919,7 +960,7 @@ As a best practice, to achieve maximum deterministic behavior and unit test robu
   // Don't do this:
   firstOrder.Item.Should().Be("Bike");
 
-  //Instead, do this:
+  // Instead, do this:
   firstOrder.Item.Should().NotBeNullOrWhiteSpace();
   ```
 
@@ -962,9 +1003,37 @@ As a general rule of thumb,
   // Don't do this:
   firstOrder.Item.Should().Be("Bike");
 
-  //Instead, do this:
+  // Instead, do this:
   firstOrder.Item.Should().NotBeNullOrWhiteSpace();
   ```
+
+#### Deterministic Dates and Times
+
+**Bogus** can generate deterministic dates and times. However, generating deterministic dates and times requires the following:
+
+1. Setting up a [local or global](#determinism) seed value.
+1. Setting up a global anchor source of time in `Bogus.DataSets.Date.SystemClock`.
+
+The following code shows how to setup deterministic dates and times:
+
+```csharp
+// Setup some kind of seed, global or local. Here, we use a global seed.
+Randomizer.Seed = new Random(1338);
+
+// Setup a static source of time.
+Bogus.DataSets.Date.SystemClock = () => DateTime.Parse("8/8/2019 2:00 PM");
+
+// Now use Bogus as you normally would. All dates and times 
+// generated by Bogus should now be deterministic.
+var p = new Person();
+p.DateOfBirth;       // 1996-06-09T15:38:11
+
+var f = new Faker();
+f.Date.Past();       // 2018-09-29T07:42:26
+f.Date.Future();     // 2020-02-13T08:10:27
+```
+With the `Bogus.DataSets.Date.SystemClock` set and a [local or global](#determinism) seed, dates and times should be deterministic across multiple runs of a program.
+
 
 F# and VB.NET Examples
 ----------------------
@@ -1089,28 +1158,54 @@ End Sub
 
 
 
-Building
+Building From Source
 --------
-* Download the source code.
-* Run `build.cmd`.
 
-Upon a successful build, the results will be in the `\__compile` directory.
-The `build.cmd` compiles the C# code and embeds the locales in `Source\Bogus\data`.
-If you want to rebuild the NuGet packages run `build.cmd pack` and the NuGet
-packages will be in `__package`.
+The following section is only useful for people looking to contribute to **Bogus** or make custom modifications to **Bogus**. This section includes information about building **Bogus** from source code and is not required to operate or run **Bogus** in **.NET** applications.
+
+The minimum requirements to build **Bogus** from source code are as follows:
+* **Windows 7** or later.
+* [**Git for Windows**](https://git-scm.com/downloads) `v2.17.1` or later.
+* [**.NET Framework**](https://dotnet.microsoft.com/download/dotnet-framework) `v4.7.1`.
+* [**.NET Core SDK**](https://dotnet.microsoft.com/download/dotnet-core/3.1) `SDK v3.1.100` or later.
+* Optional: IDE with C# 8 support.
+    * Visual Studio 2019 or later.
+
+#### Build Instructions
+* Download the source code.
+* Open command prompt and run `build.cmd`:
+    * `build clean` - cleans sources and files.
+    * `build restore` - restores all project references.
+    * `build dnx` - the main dotnet build task.
+    * `build zip` - creates a nice zip file with debug and release binaries.
+    * `build nuget` - builds **NuGet** packages.
+    * `build test` - runs all unit tests. 
+    
+Upon a successful build, the following folders will be created:
+ * `\__compile` - binary output folder for the compiler.
+ * `\__package` - output folder for zip and **NuGet** packages.
+ * `\__test` - test results folder.
+
+#### Build Environment Variables
+* `set FORCE_VERSION=1.2.3`  
+   If `FORCE_VERSION` environment variable is set with a semantic version number (eg: `x.y.z`), the build tasks will use the `FORCE_VERSION` to produce builds with the exact version number. Useful for testing out-of-band custom builds. However, it is not possible to reproduce exact binary equivalents of released **NuGet** packages because packages release on **NuGet** contain assemblies that are digitally signed with assembly signing enabled. The public does not have access to the signing key. 
 
 #### Rebundling Locales
-If you wish to re-bundle the latest **faker.js** locales, you'll need to first:
+Re-bundling the latest locale data from **faker.js** requires the following software installed:  
 
+* [**NodeJS**](https://nodejs.org/) `v12.18.1` or higher.
+* [**gulp**](https://gulpjs.com/) `v4` or higher.
+
+Steps to re-bundle locale data from **faker.js**:
+1. `git clone https://github.com/bchavez/Bogus.git`
+1. `cd Bogus` 
 1. `git submodule init`
-2. `git submodule update`
-3. Ensure, [NodeJS](https://nodejs.org/) and `gulp` are properly installed.
-4. `cd Source\Builder`
-5. `npm install` to install required dev dependencies.
-6. `gulp import.locales` to regenerate locales in `Source\Bogus\data`.
-7. In solution explorer add any new locales not already included as an
-`EmbeddedResource`.
-8. Finally, run `build.cmd`.
+1. `git submodule update`
+1. Ensure **NodeJS** and `gulp` are properly installed.
+1. `cd Source\Builder`
+1. `npm install` to install required dev dependencies.
+1. `npx gulp importLocales` to regenerate locales in `Source\Bogus\data`.
+1. Finally, run `build.cmd`.
 
 ### License
 * [MIT License](https://github.com/bchavez/Bogus/blob/master/LICENSE)

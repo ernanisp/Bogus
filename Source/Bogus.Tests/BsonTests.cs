@@ -21,13 +21,19 @@ namespace Bogus.Tests
       }
    }
 
-   public class BsonTests : SeededTest
+   public class BsonTests : SeededTest, IDisposable
    {
       private readonly ITestOutputHelper console;
 
       public BsonTests(ITestOutputHelper console)
       {
          this.console = console;
+      }
+
+      public void Dispose()
+      {
+         Database.ResetLocale("en");
+         Database.ResetLocale("it");
       }
 
       [Fact]
@@ -53,7 +59,7 @@ namespace Bogus.Tests
 
          Action error = () => extra.JunkFood().Should().Be("Pizza");
 
-         error.ShouldThrow<NullReferenceException>();
+         error.Should().Throw<NullReferenceException>();
       }
 
 
@@ -89,7 +95,6 @@ namespace Bogus.Tests
          //and we should only have the one's we have patched.
          namesFromDataSet.Should().BeEquivalentTo(names);
       }
-
 
 
       private void PatchEnLocaleWithExtraStuff()
@@ -128,8 +133,6 @@ namespace Bogus.Tests
                }
             };
       }
-
-
    }
 
 }

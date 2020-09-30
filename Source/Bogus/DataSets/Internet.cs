@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
+using Bogus.Extensions;
 using Bogus.Vendor;
 
 namespace Bogus.DataSets
@@ -50,9 +53,9 @@ namespace Bogus.DataSets
       /// <returns>An email address</returns>
       public string Email(string firstName = null, string lastName = null, string provider = null, string uniqueSuffix = null)
       {
-         provider = provider ?? GetRandomArrayItem("free_email");
+         provider ??= GetRandomArrayItem("free_email");
 
-         return Utils.Slugify(UserName(firstName, lastName)) + uniqueSuffix + "@" + provider;
+         return UserName(firstName, lastName) + uniqueSuffix + "@" + provider;
       }
 
       /// <summary>
@@ -70,34 +73,49 @@ namespace Bogus.DataSets
       /// <summary>
       /// Generates user names.
       /// </summary>
-      /// <param name="firstName">Always used.</param>
-      /// <param name="lastName">Sometimes used depending on randomness.</param>
+      /// <param name="firstName">First name is always part of the returned user name.</param>
+      /// <param name="lastName">Last name may or may not be used.</param>
       /// <returns>A random user name.</returns>
       public string UserName(string firstName = null, string lastName = null)
       {
-         firstName = firstName ?? Name.FirstName();
-         lastName = lastName ?? Name.LastName();
+         firstName ??= Name.FirstName();
+         lastName ??= Name.LastName();
+
+         firstName = firstName.Transliterate(this.Locale);
+         lastName = lastName.Transliterate(this.Locale);
+
+         return Utils.Slugify(UserNameUnicode(firstName, lastName));
+      }
+
+      /// <summary>
+      /// Generates a user name preserving Unicode characters.
+      /// </summary>
+      /// <param name="firstName">First name is always part of the returned user name.</param>
+      /// <param name="lastName">Last name may or may not be used.</param>
+      public string UserNameUnicode(string firstName = null, string lastName = null)
+      {
+         firstName ??= Name.FirstName();
+         lastName ??= Name.LastName();
 
          var val = Random.Number(2);
 
          string result;
 
-         if( val == 0 )
+         if (val == 0)
          {
             result = firstName + Random.Number(99);
          }
-         else if( val == 1 )
+         else if (val == 1)
          {
-            result = firstName + Random.ArrayElement(new[] {".", "_"}) + lastName;
+            result = firstName + Random.ArrayElement(new[] { ".", "_" }) + lastName;
          }
          else
          {
-            result = firstName + Random.ArrayElement(new[] {".", "_"}) + lastName + Random.Number(99);
+            result = firstName + Random.ArrayElement(new[] { ".", "_" }) + lastName + Random.Number(99);
          }
 
          result = result.Replace(" ", string.Empty);
-
-         return Utils.Slugify(result);
+         return result;
       }
 
       /// <summary>
@@ -109,7 +127,6 @@ namespace Bogus.DataSets
          return DomainWord() + "." + DomainSuffix();
       }
 
-
       /// <summary>
       /// Generates a domain word used for domain names.
       /// </summary>
@@ -118,7 +135,7 @@ namespace Bogus.DataSets
       {
          var domain = Name.FirstName().ToLower();
 
-         return Regex.Replace(domain, @"([\\~#&*{}/:<>?|\""'])", string.Empty);
+         return Regex.Replace(domain, @"([\\ ~#&*{}/:<>?|\""'])", string.Empty);
       }
 
       /// <summary>
@@ -131,23 +148,66 @@ namespace Bogus.DataSets
       }
 
       /// <summary>
-      /// Gets a random IP address.
+      /// Gets a random IPv4 address string.
       /// </summary>
-      /// <returns>A random IP address.</returns>
+      /// <returns>A random IPv4 address.</returns>
       public string Ip()
       {
-         return $"{Random.Number(255)}.{Random.Number(255)}.{Random.Number(255)}.{Random.Number(255)}";
+         return $"{Random.Number(1, 255)}.{Random.Number(255)}.{Random.Number(255)}.{Random.Number(255)}";
       }
 
       /// <summary>
-      /// Generates a random IPv6 address.
+      /// Gets a random IPv4 IPAddress type.
+      /// </summary>
+      public IPAddress IpAddress()
+      {
+         var bytes = this.Random.Bytes(4);
+         if( bytes[0] == 0 ) bytes[0]++;
+         var address = new IPAddress(bytes);
+         return address;
+      }
+
+      /// <summary>
+      /// Gets a random IPv4 IPEndPoint.
+      /// </summary>
+      /// <returns>A random IPv4 IPEndPoint.</returns>
+      public IPEndPoint IpEndPoint()
+      {
+         var address = this.IpAddress();
+         var port = this.Random.Int(IPEndPoint.MinPort + 1, IPEndPoint.MaxPort);
+         return new IPEndPoint(address, port);
+      }
+
+      /// <summary>
+      /// Generates a random IPv6 address string.
       /// </summary>
       /// <returns>A random IPv6 address.</returns>
       public string Ipv6()
       {
-         var bytes = Random.Bytes(16);
+         var bytes = this.Random.Bytes(16);
          return
             $"{bytes[0]:x}{bytes[1]:x}:{bytes[2]:x}{bytes[3]:x}:{bytes[4]:x}{bytes[5]:x}:{bytes[6]:x}{bytes[7]:x}:{bytes[8]:x}{bytes[9]:x}:{bytes[10]:x}{bytes[11]:x}:{bytes[12]:x}{bytes[13]:x}:{bytes[14]:x}{bytes[15]:x}";
+      }
+
+      /// <summary>
+      /// Generate a random IPv6 IPAddress type.
+      /// </summary>
+      /// <returns></returns>
+      public IPAddress Ipv6Address()
+      {
+         var address = new IPAddress(this.Random.Bytes(16));
+         return address;
+      }
+
+      /// <summary>
+      /// Gets a random IPv6 IPEndPoint.
+      /// </summary>
+      /// <returns>A random IPv6 IPEndPoint.</returns>
+      public IPEndPoint Ipv6EndPoint()
+      {
+         var address = this.Ipv6Address();
+         var port = this.Random.Int(IPEndPoint.MinPort + 1, IPEndPoint.MaxPort);
+         return new IPEndPoint(address, port);
       }
 
       private UserAgentGenerator userAgentGenerator;
@@ -241,9 +301,13 @@ namespace Bogus.DataSets
             blue = red;
          }
 
+         var r = (byte)red;
+         var g = (byte)green;
+         var b = (byte)blue;
+
          if( format == ColorFormat.Hex )
          {
-            return string.Format("#{0:x02}{1:x02}{2:x02}", (byte)red, (byte)green, (byte)blue);
+            return $"#{r:x02}{g:x02}{b:x02}";
          }
 
          if( format == ColorFormat.Delimited )
@@ -255,7 +319,7 @@ namespace Bogus.DataSets
 
          string DelimitedRgb()
          {
-            return $"{(byte)red},{(byte)green},{(byte)blue}";
+            return $"{r},{g},{b}";
          }
       }
 
@@ -280,19 +344,33 @@ namespace Bogus.DataSets
       }
 
       /// <summary>
-      /// Get a random URL with random path.
+      /// Get an absolute URL with random path.
       /// </summary>
       /// <param name="protocol">Protocol part of the URL, random if null</param>
       /// <param name="domain">Domain part of the URL, random if null</param>
+      /// <param name="fileExt">The file extension to use in the path, directory if null</param>
       /// <returns>An URL with a random path.</returns>
-      public string UrlWithPath(string protocol = null, string domain = null)
+      public string UrlWithPath(string protocol = null, string domain = null, string fileExt = null)
+      {
+         var path = UrlRootedPath(fileExt);
+         return $"{Url(protocol, domain)}{path}";
+      }
+
+      /// <summary>
+      /// Get a rooted URL path like: /foo/bar. Optionally with file extension.
+      /// </summary>
+      /// <param name="fileExt">Optional: The file extension to use. If <paramref name="fileExt"/> is null, then a rooted URL directory is returned.</param>
+      /// <returns>Returns a rooted URL path like: /foo/bar; optionally with a file extension.</returns>
+      public string UrlRootedPath(string fileExt = null)
       {
          var words = Random.WordsArray(1, 3)
             .Select(Utils.Slugify)
             .Select(s => s.ToLower())
             .ToArray();
 
-         return $"{Url(protocol, domain)}/{Utils.Slashify(words)}";
+         var path = $"/{Utils.Slashify(words)}";
+
+         return Path.ChangeExtension(path, fileExt);
       }
 
       private string Url(string protocol, string domain)

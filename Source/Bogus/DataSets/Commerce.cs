@@ -34,8 +34,9 @@ namespace Bogus.DataSets
          var cats = Categories(num);
          if( num > 1 )
          {
-            return string.Format("{0} & {1}", string.Join(", ", cats.Take(cats.Length - 1)),
-               cats.Last());
+            var catJoin = string.Join(", ", cats.Take(cats.Length - 1));
+            var catLast = cats.Last();
+            return $"{catJoin} & {catLast}";
          }
 
          return cats[0];
@@ -118,6 +119,15 @@ namespace Bogus.DataSets
       public string ProductMaterial()
       {
          return GetRandomArrayItem("product_name.material");
+      }
+
+      /// <summary>
+      /// Random product description.
+      /// </summary>
+      /// <returns>A random product description.</returns>
+      public string ProductDescription()
+      {
+         return GetRandomArrayItem("product_description");
       }
 
       /// <summary>

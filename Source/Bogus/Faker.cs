@@ -40,6 +40,8 @@ namespace Bogus
          this.Rant = this.Notifier.Flow(new Rant());
          this.Vehicle = this.Notifier.Flow(new Vehicle());
 
+         this.Music = this.Notifier.Flow(new Music());
+
          this.Hashids = new Hashids();
       }
 
@@ -99,7 +101,7 @@ namespace Bogus
       /// <summary>
       /// A contextually relevant fields of a person.
       /// </summary>
-      public Person Person => person ?? (person = new Person(this.Random, this.Locale));
+      public Person Person => person ??= new Person(this.Random, this.Locale);
 
       /// <summary>
       /// Creates hacker gibberish.
@@ -190,6 +192,12 @@ namespace Bogus
       /// </summary>
       [RegisterMustasheMethods]
       public Vehicle Vehicle { get; set; }
+
+      /// <summary>
+      /// Generates data related to music.
+      /// </summary>
+      [RegisterMustasheMethods]
+      public Music Music { get; set; }
 
       /// <summary>
       /// Helper method to pick a random element.

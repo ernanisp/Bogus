@@ -98,15 +98,15 @@ namespace Bogus.Tests.DataSetTests
       {
          var img = image.LoremFlickrUrl(640, 480, "dog");
 
-         img.Should().Be("https://loremflickr.com/640/480/dog/any?lock=1296054234");
+         img.Should().Be("https://loremflickr.com/640/480/dog/any?lock=1721768941");
          
          img = image.LoremFlickrUrl(100, 100, "cat");
 
-         img.Should().Be("https://loremflickr.com/100/100/cat/any?lock=235660067");
+         img.Should().Be("https://loremflickr.com/100/100/cat/any?lock=199070641");
 
          img = image.LoremFlickrUrl(100, 100, "cat,bird");
 
-         img.Should().Be("https://loremflickr.com/100/100/cat,bird/any?lock=1749342364");
+         img.Should().Be("https://loremflickr.com/100/100/cat,bird/any?lock=1035518479");
 
          img = image.LoremFlickrUrl(100, 100, "cat,bird", lockId: -1, grascale: true);
 
@@ -119,6 +119,29 @@ namespace Bogus.Tests.DataSetTests
          img = image.LoremFlickrUrl(100, 100, "cat    bird", lockId: 227, grascale: true, matchAllKeywords: true);
 
          img.Should().Be("https://loremflickr.com/g/100/100/cat,bird/all?lock=227");
+      }
+
+
+      [Fact]
+      public void can_use_placeimg_url()
+      {
+         var img = image.PlaceImgUrl(640, 480, PlaceImgCategory.Animals);
+         img.Should().Be("https://placeimg.com/640/480/animals");
+
+         img = image.PlaceImgUrl();
+         img.Should().Be("https://placeimg.com/640/480/any");
+
+         img = image.PlaceImgUrl(777, 222, filter: PlaceImgFilter.Grayscale);
+         img.Should().Be("https://placeimg.com/777/222/any/grayscale");
+
+         img = image.PlaceImgUrl(777, 222, PlaceImgCategory.Architecture, PlaceImgFilter.Sepia);
+         img.Should().Be("https://placeimg.com/777/222/arch/sepia");
+
+         img = image.PlaceImgUrl(777, 333, PlaceImgCategory.Architecture);
+         img.Should().Be("https://placeimg.com/777/333/arch");
+
+         img = image.PlaceImgUrl(777, 444, PlaceImgCategory.Tech);
+         img.Should().Be("https://placeimg.com/777/444/tech");
       }
    }
 }

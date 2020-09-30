@@ -46,7 +46,7 @@ namespace Bogus
       /// <summary>
       /// Get an int from 0 to max.
       /// </summary>
-      /// <param name="max">Upper bound, inclusive. Only int.MaxValue is exclusive.</param>
+      /// <param name="max">Upper bound, inclusive.</param>
       public int Number(int max)
       {
          return Number(0, max);
@@ -60,8 +60,8 @@ namespace Bogus
       /// <param name="maxDigit">maximum digit, inclusive</param>
       public int[] Digits(int count, int minDigit = 0, int maxDigit = 9)
       {
-         if( maxDigit > 9 || maxDigit < 0 ) throw new ArgumentException(nameof(maxDigit), "max digit can't be lager than 9 or smaller than 0");
-         if( minDigit > 9 || minDigit < 0 ) throw new ArgumentException(nameof(minDigit), "min digit can't be lager than 9 or smaller than 0");
+         if( maxDigit > 9 || maxDigit < 0 ) throw new ArgumentException("max digit can't be lager than 9 or smaller than 0", nameof(maxDigit));
+         if( minDigit > 9 || minDigit < 0 ) throw new ArgumentException("min digit can't be lager than 9 or smaller than 0", nameof(minDigit));
 
          var digits = new int[count];
          for( var i = 0; i < count; i++ )
@@ -75,46 +75,95 @@ namespace Bogus
       /// Get an int from min to max.
       /// </summary>
       /// <param name="min">Lower bound, inclusive</param>
-      /// <param name="max">Upper bound, inclusive. Only int.MaxValue is exclusive.</param>
+      /// <param name="max">Upper bound, inclusive</param>
       public int Number(int min = 0, int max = 1)
       {
          //lock any seed access, for thread safety.
          lock( Locker.Value )
          {
-            //Clamp max value, Issue #30.
-            max = max == int.MaxValue ? max : max + 1;
-            return localSeed.Next(min, max);
+            // Adjust the range as needed to make max inclusive. The Random.Next function uses exclusive upper bounds.
+
+            // If max can be extended by 1, just do that.
+            if( max < int.MaxValue ) return localSeed.Next(min, max + 1);
+
+            // If max is exactly int.MaxValue, then check if min can be used to push the range out by one the other way.
+            // If so, then we can simply add one to the result to put it back in the correct range.
+            if( min > int.MinValue ) return 1 + localSeed.Next(min - 1, max);
+
+            // If we hit this line, then min is int.MinValue and max is int.MaxValue, which mean the caller wants a
+            // number from a range spanning all possible values of int. The Random class only supports exclusive
+            // upper bounds, period, and the upper bound must be specified as an int, so the best we can get in a
+            // single call is a value in the range (int.MinValue, int.MaxValue - 1). Instead, what we do is get two
+            // samples, each of which has just under 31 bits of entropy, and use 16 bits from each to assemble a
+            // single 16-bit number.
+            int sample1 = localSeed.Next();
+            int sample2 = localSeed.Next();
+
+            int topHalf = (sample1 >> 8) & 0xFFFF;
+            int bottomHalf = (sample2 >> 8) & 0xFFFF;
+
+            return unchecked((topHalf << 16) | bottomHalf);
          }
       }
 
       /// <summary>
-      /// Returns a random even number.
+      /// Returns a random even number. If the range does not contain any even numbers, an <see cref="ArgumentException" /> is thrown.
       /// </summary>
       /// <param name="min">Lower bound, inclusive</param>
       /// <param name="max">Upper bound, inclusive</param>
+      /// <exception cref="ArgumentException">Thrown if it is impossible to select an odd number satisfying the specified range.</exception>
       public int Even(int min = 0, int max = 1)
       {
-         var result = 0;
-         do //could do this better by just +1 or -1 if it's not an even/odd number
-         {
-            result = Number(min, max);
-         } while( result % 2 == 1 );
-         return result;
+         // Ensure that we have a valid range.
+         if( min > max )
+            throw new ArgumentException($"The min/max range is invalid. The minimum value '{min}' is greater than the maximum value '{max}'.", nameof(max));
+         if( ((min & 1) == 1) && (max - 1 < min) )
+            throw new ArgumentException("The specified range does not contain any even numbers.", nameof(max));
+
+         // Adjust the range to ensure that we always get the same number of even values as odd values.
+         // For example,
+         //   if the input is min = 1, max = 3, the new range should be min = 2, max = 3.
+         //   if the input is min = 2, max = 3, the range should remain min = 2, max = 3.
+         min = (min + 1) & ~1;
+         max = max | 1;
+
+         if( min > max )
+            return min;
+
+         // Strip off the last bit of a random number to make the number even.
+         return Number(min, max) & ~1;
       }
 
       /// <summary>
-      /// Returns a random odd number.
+      /// Returns a random odd number. If the range does not contain any odd numbers, an <see cref="ArgumentException" /> is thrown.
       /// </summary>
       /// <param name="min">Lower bound, inclusive</param>
       /// <param name="max">Upper bound, inclusive</param>
+      /// <exception cref="ArgumentException">Thrown if it is impossible to select an odd number satisfying the specified range.</exception>
       public int Odd(int min = 0, int max = 1)
       {
-         int result = 0;
-         do //could do this better by just +1 or -1 if it's not an even/odd number
-         {
-            result = Number(min, max);
-         } while( result % 2 == 0 );
-         return result;
+         // Ensure that we have a valid range.
+         if( min > max )
+            throw new ArgumentException($"The min/max range is invalid. The minimum value '{min}' is greater than the maximum value '{max}'.", nameof(max));
+         if( ((max & 1) == 0) && (min + 1 > max) )
+            throw new ArgumentException("The specified range does not contain any odd numbers.", nameof(max));
+
+         // Special case where the math below breaks.
+         if ( max == int.MinValue )
+            return int.MinValue | 1;
+
+         // Adjust the range to ensure that we always get the same number of even values as odd values.
+         // For example,
+         //   if the input is min = 2, max = 4, the new range should be min = 2, max = 3.
+         //   if the input is min = 2, max = 3, the range should remain min = 2, max = 3.
+         min = min & ~1;
+         max = (max - 1) | 1;
+
+         if( min > max )
+            return min | 1;
+
+         // Ensure that the last bit is set in a random number to make the number odd.
+         return Number(min, max) | 1;
       }
 
 
@@ -155,7 +204,7 @@ namespace Bogus
       /// <param name="max">Maximum, default 1.0</param>
       public float Float(float min = 0.0f, float max = 1.0f)
       {
-         return Convert.ToSingle(Double()) * (max - min) + min;
+         return Convert.ToSingle(Double() * (max - min) + min);
       }
 
       /// <summary>
@@ -440,7 +489,7 @@ namespace Bogus
       /// </summary>
       public string ArrayElement(Array array)
       {
-         array = array ?? new[] {"a", "b", "c"};
+         array ??= new[] {"a", "b", "c"};
 
          var r = Number(max: array.Length - 1);
 
@@ -587,7 +636,7 @@ namespace Bogus
       }
 
       /// <summary>
-      /// Picks a random Enum of T. Works only with Enums.
+      /// Picks a random enum value in T:Enum.
       /// </summary>
       /// <typeparam name="T">Must be an Enum</typeparam>
       /// <param name="exclude">Exclude enum values from being returned</param>
@@ -617,6 +666,39 @@ namespace Bogus
       }
 
       /// <summary>
+      /// Picks a random subset of enum values in T:Enum.
+      /// </summary>
+      /// <typeparam name="T">The enum.</typeparam>
+      /// <param name="count">The number of enums to pick.</param>
+      /// <param name="exclude">Any enums that should be excluded before picking.</param>
+      public T[] EnumValues<T>(int? count = null, params T[] exclude) where T : Enum
+      {
+         T[] enums;
+         if( exclude.Length > 0)
+         {
+            enums = System.Enum.GetValues(typeof(T))
+               .OfType<T>()
+               .Except(exclude)
+               .ToArray();
+         }
+         else
+         {
+            enums = System.Enum.GetValues(typeof(T))
+               .OfType<T>()
+               .Except(exclude)
+               .ToArray();
+         }
+
+         if( count > enums.Length || count < 0 )
+         {
+            throw new ArgumentOutOfRangeException(nameof(count), count,
+            $"The {nameof(count)} parameter is {count} and the calculated set of enums has a length of {enums.Length}. It is impossible to pick {count} enums from a list of {enums.Length}.");
+         }
+
+         return this.ArrayElements(enums, count);
+      }
+
+      /// <summary>
       /// Shuffles an IEnumerable source.
       /// </summary>
       public IEnumerable<T> Shuffle<T>(IEnumerable<T> source)
@@ -643,7 +725,7 @@ namespace Bogus
       /// </summary>
       public string Word()
       {
-         this.wordFunctions = this.wordFunctions ?? new WordFunctions(this);
+         this.wordFunctions ??= new WordFunctions(this);
          var randomWordMethod = ListItem(this.wordFunctions.Functions);
          return randomWordMethod();
       }

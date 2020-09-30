@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Attributes.Exporters;
 using Bogus;
 
 namespace Benchmark
@@ -15,7 +14,7 @@ namespace Benchmark
       //   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")]
       public string Pool { get; set; } = "abcdefghijklmnopqrstuvwxyz";
 
-      [Setup]
+      [GlobalSetup]
       public void Setup()
       {
          this.r = new Randomizer();

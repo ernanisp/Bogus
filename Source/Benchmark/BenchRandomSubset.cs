@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Attributes.Exporters;
 using Bogus;
 
 namespace Benchmark
@@ -16,7 +15,7 @@ namespace Benchmark
         [Params(2, 10, 100, 500, 1000, 1999)]
         public int Selections { get; set; }
 
-        [Setup]
+        [GlobalSetup]
         public void Setup()
         {
             r = new Randomizer();

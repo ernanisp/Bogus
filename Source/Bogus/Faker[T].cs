@@ -176,18 +176,7 @@ namespace Bogus
       {
          var propName = PropertyName.For(property);
 
-         Func<Faker, T, object> invoker = (f, t) => setter(f, t);
-
-         var rule = new PopulateAction<T>
-            {
-               Action = invoker,
-               RuleSet = currentRuleSet,
-               PropertyName = propName
-            };
-
-         this.Actions.Add(currentRuleSet, propName, rule);
-
-         return this;
+         return AddRule(propName, (f, t) => setter(f, t));
       }
 
       /// <summary>
@@ -195,7 +184,19 @@ namespace Bogus
       /// </summary>
       public virtual Faker<T> RuleFor<TProperty>(Expression<Func<T, TProperty>> property, TProperty value)
       {
-         return RuleFor(property, f => value);
+         var propName = PropertyName.For(property);
+
+         return AddRule(propName, (f, t) => value);
+      }
+
+      /// <summary>
+      /// Creates a rule for a property.
+      /// </summary>
+      public virtual Faker<T> RuleFor<TProperty>(Expression<Func<T, TProperty>> property, Func<TProperty> valueFunction)
+      {
+         var propName = PropertyName.For(property);
+
+         return AddRule(propName, (f, t) => valueFunction());
       }
 
       /// <summary>
@@ -205,13 +206,43 @@ namespace Bogus
       {
          var propName = PropertyName.For(property);
 
-         return RuleFor(propName, setter);
+         return AddRule(propName, (f, t) => setter(f));
       }
 
-      protected virtual Faker<T> RuleFor<TProperty>(string propertyOrField, Func<Faker, TProperty> setter)
+      /// <summary>
+      /// Create a rule for a hidden property or field.
+      /// Used in advanced scenarios to create rules for hidden properties or fields.
+      /// </summary>
+      /// <param name="propertyOrFieldName">The property name or field name of the member to create a rule for.</param>
+      public virtual Faker<T> RuleFor<TProperty>(string propertyOrFieldName, Func<Faker, TProperty> setter)
       {
-         Func<Faker, T, object> invoker = (f, t) => setter(f);
+         EnsureMemberExists(propertyOrFieldName,
+            $"The property or field {propertyOrFieldName} was not found on {typeof(T)}. " +
+            $"Can't create a rule for {typeof(T)}.{propertyOrFieldName} when {propertyOrFieldName} " +
+            $"cannot be found. Try creating a custom IBinder for Faker<T> with the appropriate " +
+            $"System.Reflection.BindingFlags that allows deeper reflection into {typeof(T)}.");
 
+         return AddRule(propertyOrFieldName, (f, t) => setter(f));
+      }
+
+      /// <summary>
+      /// Create a rule for a hidden property or field.
+      /// Used in advanced scenarios to create rules for hidden properties or fields.
+      /// </summary>
+      /// <param name="propertyOrFieldName">The property name or field name of the member to create a rule for.</param>
+      public virtual Faker<T> RuleFor<TProperty>(string propertyOrFieldName, Func<Faker, T, TProperty> setter)
+      {
+         EnsureMemberExists(propertyOrFieldName,
+            $"The property or field {propertyOrFieldName} was not found on {typeof(T)}. " +
+            $"Can't create a rule for {typeof(T)}.{propertyOrFieldName} when {propertyOrFieldName} " +
+            $"cannot be found. Try creating a custom IBinder for Faker<T> with the appropriate " +
+            $"System.Reflection.BindingFlags that allows deeper reflection into {typeof(T)}.");
+         
+         return AddRule(propertyOrFieldName, (f, t) => setter(f, t));
+      }
+
+      protected virtual Faker<T> AddRule(string propertyOrField, Func<Faker, T, object> invoker)
+      {
          var rule = new PopulateAction<T>
             {
                Action = invoker,
@@ -247,23 +278,6 @@ namespace Bogus
             };
          this.Actions.Add(currentRuleSet, guid, rule);
          return this;
-      }
-
-      /// <summary>
-      /// Creates a rule for a property.
-      /// </summary>
-      public virtual Faker<T> RuleFor<TProperty>(Expression<Func<T, TProperty>> property, Func<TProperty> valueFunction)
-      {
-         return RuleFor(property, (f) => valueFunction());
-      }
-
-      /// <summary>
-      /// Not Implemented: This method only exists as a work around for Visual Studio IntelliSense. See: https://github.com/bchavez/Bogus/issues/54
-      /// </summary>
-      [Obsolete("This exists here only as a Visual Studio IntelliSense work around. See: https://github.com/bchavez/Bogus/issues/54", true)]
-      public void RuleFor<TProperty>(Expression<Func<T, TProperty>> property)
-      {
-         throw new NotImplementedException();
       }
 
       /// <summary>
@@ -326,28 +340,49 @@ namespace Bogus
       }
 
       /// <summary>
+      /// Ensures a member exists provided by the IBinder.
+      /// </summary>
+      protected virtual void EnsureMemberExists(string propNameOrField, string exceptionMessage)
+      {
+         if (!this.TypeProperties.TryGetValue(propNameOrField, out MemberInfo mi))
+         {
+            throw new ArgumentException(exceptionMessage);
+         }
+      }
+
+      /// <summary>
+      /// Ignores a property or field when <seealso cref="StrictMode"/> is enabled.
+      /// Used in advanced scenarios to ignore hidden properties or fields.
+      /// </summary>
+      /// <param name="propertyOrFieldName">The property name or field name of the member to create a rule for.</param>
+      public virtual Faker<T> Ignore(string propertyOrFieldName)
+      {
+         EnsureMemberExists(propertyOrFieldName,
+            $"The property or field {propertyOrFieldName} was not found on {typeof(T)}. " +
+            $"Can't ignore member {typeof(T)}.{propertyOrFieldName} when {propertyOrFieldName} " +
+            $"cannot be found. Try creating a custom IBinder for Faker<T> with the appropriate " +
+            $"System.Reflection.BindingFlags that allows deeper reflection into {typeof(T)}.");
+
+         var rule = new PopulateAction<T>
+            {
+               Action = null,
+               RuleSet = currentRuleSet,
+               PropertyName = propertyOrFieldName
+            };
+
+         this.Actions.Add(currentRuleSet, propertyOrFieldName, rule);
+
+         return this;
+      }
+
+      /// <summary>
       /// Ignores a property or field when <seealso cref="StrictMode"/> is enabled.
       /// </summary>
       public virtual Faker<T> Ignore<TPropertyOrField>(Expression<Func<T, TPropertyOrField>> propertyOrField)
       {
          var propNameOrField = PropertyName.For(propertyOrField);
 
-         if( !this.TypeProperties.TryGetValue(propNameOrField, out MemberInfo mi) )
-         {
-            throw new ArgumentException(
-               $"The property or field {propNameOrField} was not found on {typeof(T)} during the binding discovery of T. Can't ignore something that doesn't exist.");
-         }
-
-         var rule = new PopulateAction<T>
-            {
-               Action = null,
-               RuleSet = currentRuleSet,
-               PropertyName = propNameOrField
-            };
-
-         this.Actions.Add(currentRuleSet, propNameOrField, rule);
-
-         return this;
+         return Ignore(propNameOrField);
       }
 
       /// <summary>
@@ -481,7 +516,7 @@ namespace Bogus
       {
          while( true )
          {
-            yield return this.Generate();
+            yield return this.Generate(ruleSets);
          }
       }
 
@@ -676,8 +711,13 @@ namespace Bogus
          var binderPropsOrFieldsOfT = this.TypeProperties.Keys;
          foreach( var rule in ruleSets )
          {
-            var strictMode = Faker.DefaultStrictMode;
-            this.StrictModes.TryGetValue(rule, out strictMode);
+            if( this.StrictModes.TryGetValue(rule, out var strictMode) )
+            {
+            }
+            else
+            {
+               strictMode = Faker.DefaultStrictMode;
+            }
 
             //If strictMode is not enabled, skip and move on to the next ruleSet.
             if( !strictMode ) continue;
@@ -731,6 +771,16 @@ namespace Bogus
       public static implicit operator T(Faker<T> faker)
       {
          return faker.Generate();
+      }
+
+
+      /// <summary>
+      /// Not Implemented: This method only exists as a work around for Visual Studio IntelliSense. See: https://github.com/bchavez/Bogus/issues/54
+      /// </summary>
+      [Obsolete("This exists here only as a Visual Studio IntelliSense work around. See: https://github.com/bchavez/Bogus/issues/54", true)]
+      public void RuleFor<TProperty>(Expression<Func<T, TProperty>> property)
+      {
+         throw new NotImplementedException();
       }
    }
 }

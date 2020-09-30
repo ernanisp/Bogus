@@ -1,5 +1,175 @@
-## v26.0.3 - /master current
-Release Date: UNRELEASED
+## v31.0.2
+Release Date: 2020-09-13
+
+* Ensures Bogus Premium datasets load with new `DataSet.Get(category, path)` overload.
+
+## v31.0.1
+Release Date: 2020-09-13, UNPUBLISHED FROM NUGET
+
+* Locale data parity with faker-js@91dc8a3.
+* Added `Music` dataset with `.Genre()` method.
+* Added `Date.TimeZoneString()`.
+* Added new Finnish `fi` locale.
+* Added new Hrvatski `hr` locale.
+* `cz` locale updated.
+* `en` locale updated.
+* `en_IE` locale updated.
+* `en_IND` locale updated.
+* `fa` locale updated.
+* `fr` locale updated.
+* `ja` locale updated.
+* `pl` locale updated.
+* `pt_BR` locale updated.
+* `ru` locale updated.
+* `sv` locale updated.
+* `vi` locale updated.
+* `zh_CN` locale updated.
+
+## v30.0.4
+Release Date: 2020-08-15
+
+* Issue 319: The `Random.Decimal()` implementation reverted to previous v29 implementation. Avoids arithmetic `OverflowException` when calling `Random.Decimal(0, decimal.MaxValue)`. The v30 implementation moved to `Bogus.Extensions` namespace as `Random.Decimal2()` which can generate more decimal precision.
+
+## v30.0.3
+Release Date: 2020-08-13, UNPUBLISHED FROM NUGET
+
+* Added `f.Address.CountryOfUnitedKingdom()` extension method in `Bogus.Extensions.UnitedKingdom`.
+
+## v30.0.2
+Release Date: 2020-08-05, UNPUBLISHED FROM NUGET
+
+* Deterministic sequences may have changed.
+* Promoted v30.0.1-beta-4 to v30.0.2 release.
+
+## v30.0.1-beta-4
+Release Date: 2020-07-23
+
+* Change credit card `CheckDigitExtension` methods to public
+
+## v30.0.1-beta-3
+Release Date: 2020-06-29
+
+* Issue 307: Fixed `Internet.UserAgent()` sometimes generating invalid user agent strings that could not be parsed by `System.Net.Http.HttpRequestMessage.Headers`.
+
+## v30.0.1-beta-2
+Release Date: 2020-06-20
+
+* Added `Finance.Litecoin()`.
+* Added `Commerce.ProductDescription()`.
+* Add PlaceIMG image service. `Image.PlaceImgUrl()`.
+* Data parity with faker.js. Deterministic sequences may have changed.
+* New `en_NG` Nigerian locale.
+* `en` updated.
+* `nl_BE` updated.
+* `de` updated.
+* `ru` updated.
+* `zh_CN` updated.
+* `zh_TW` updated.
+* `ar` updated. 
+* `cz` updated.
+* `es_MX` updated.
+* `sk` updated.
+* `it` updated.
+
+## v30.0.1-beta-1
+Release Date: 2020-06-14
+
+* PR 300: `Random.Number()` now inclusive of `max: int.MaxValue`.
+* PR 300: `Random.Even()` better random distribution and range checking.
+* PR 300: `Random.Odd()` better random distribution and range checking.  
+* PR 300: `Random.Int()` bug fixed where `.Int()` may not return `int.MaxValue`.
+* PR 300: `Random.Decimal()` with greater decimal precision.
+* Deterministic values may have changed.
+* Big thank you to @logiclrd for PR 300!
+
+## v29.0.2
+Release Date: 2020-04-11
+
+* Minor update to `ru` locale data. Two `ru` city names could appear as one. 
+
+## v29.0.1
+Release Date: 2020-02-10
+
+* Data parity with faker.js. Deterministic sequences using `Internet.Avatar()` may have changed.
+* Add support for .snupkg NuGet Symbol Server Packages via SourceLink.
+* Added Randomizer.EnumValues() that makes selecting a subset of enum values easier.
+* Modified `.OrNull(f)` extension method signatures for type-safe with nullable primitive types, structs, and reference types via `in` parameter to avoid ambiguous calls.
+
+## v28.4.4
+Release Date: 2019-12-10
+
+* PR 272: Add extension method for generating Norwegian national identity numbers. `Person.Fødselsnummer()`. Thanks @mika-s!
+
+## v28.4.3
+Release Date: 2019-12-03
+
+* Issue 271: Minor bug fix in Brazil `Person.Cpf()` extension method. Previously, only the first call to `Person.Cpf(includeFormatSymbols)` respected the `includeFormatSymbols` parameter due to the final result being saved in `Person` context. `Person.Cpf()` now respects the `includeFormatSymbols` parameter after subsequent repeat calls to `Cpf()` with the same `Person`. Thanks for testing @ArthNRick!
+
+## v28.4.2
+Release Date: 2019-11-30
+
+* PR 269: Adds `includeFormatSymbols` parameter to include or exclude formatting characters for Brazil `Person.Cpf()` and `Company.Cnpj()` extension methods.
+
+## v28.4.1
+Release Date: 2019-10-14
+
+* Issue 260: Improved social security number (SSN) generation that should pass basic validation by avoiding invalid SSN ranges. Note: Deterministic SSNs generated with `Person.Ssn()` will change.
+* Issue 252: `Internet.Ip()` now avoids generating IP addresses with a leading zero. For example, Bogus will not generate an IP address with a leading zero like 0.1.2.3. Note: Deterministic IPs generated with `Internet.Ip()` will change.
+* PR 261: Added `Internet.IpAddress()`, `Internet.Ipv6Address()`, `Internet.IpEndPoint()`, and `Internet.Ipv6EndPoint()`.
+* Issue 258: Add `Internet.UrlRootedPath()` to generate random `/foo/bar` paths.
+* Added `Internet.UrlWithPath(fileExt:".txt")` fileExt extension parameter to generate URLs with a specific file extension.
+
+## v28.3.2
+Release Date: 2019-10-04
+
+* PR 259: Fixes `.GenerateForever(ruleset)` to use ruleset parameter when supplied as argument. Thanks @StanleyGoldman!
+
+## v28.3.1
+Release Date: 2019-09-20
+
+* Issue 255 / PR 256: Allows interfaces with `Faker<T>` using `Faker<IFoo>.CustomInstantiator(f => new Foo())`. Thanks Rowland!
+
+## v28.2.1
+Release Date: 2019-09-10
+
+* Added `Faker<T>.RuleFor(string, (f, t) => )` overload.
+* Internal re-factoring `.RuleFor` overload logic. Simplified overload call chain.
+* Internal `Faker<T>.RuleForInternal()` renamed to `Faker<T>.AddRule()`
+
+## v28.1.1
+Release Date: 2019-09-09
+
+* Issue 253, PR 254: New rule overload for `Faker<T>.RuleFor('string',...)`. Helps cases that require rules for protected or hidden members of `T`.
+
+## v28.0.3
+Release Date: 2019-08-28
+
+* Issue 249: Fixed `Internet.Url()` including spaces in domain names for `pt_BR` locale or any locale with compound first names that may contain spaces. Thanks RodrigoRodriguesX10!
+* PR 241: General code quality improvements in `DataSets.System`. Better XML docs and lower array allocations. Thanks bartdebever!
+* PR 245: XML doc improvements to `DataSets.Lorem`. Thanks bartdebever! 
+
+## v28.0.2
+Release Date: 2019-07-07
+
+* PR 235: Added `Bogus.DataSets.Vehicle.GbRegistrationPlate()` in `Bogus.Extensions.UnitedKingdom` extension namespace to generate GB registration plates. Thanks @colinangusmackay.
+
+## v28.0.1
+Release Date: 2019-07-02
+
+* BREAKING: Deterministic sequence values may have changed for fake email addresses derived from `Internet.Email()` or `Internet.UserName()` in locales other than `en`.
+* Issue 229: Adds `Finance.Iban(countryCode)` ISO3166 country code parameter. Allows generating IBAN codes for specific countries. The country code must be a supported otherwise an exception is thrown.  
+* Issue 225: Better support for transliteration of international Unicode characters to US-Latin/Roman ASCII character sets. `Internet.Email()` and `Internet.UserName()` are more respectful of specified locale using character transliteration.
+* Added `.Transliterate()` string extension method in `Bogus.Extensions` namespace.
+* Added `Internet.UserNameUnicode()` that preserves Unicode characters in user names.
+* Minor performance improvement to `Utils.Slugify` using compiled Regex.
+* Issue 232: Adds `.OrNull[T]() where T : struct` overload which makes it easier to work with nullable types without type casting.
+* Added `defaultValue` parameter to `.OrDefault(f, weight, defaultValue)` that can default to a different value than the `default` keyword.
+
+
+## v27.0.1
+Release Date: 2019-05-02
+
+* Issue 218: Fixed bug that prevented global static `Faker.DefaultStrictMode` from working.
 * Issue 210: Added `Randomizer.Utf16String` that generates technically valid Unicode with paired high/low surrogates.
 * Added `placeholder.com` image service.
 
@@ -175,7 +345,9 @@ Release Date: 2018-03-02
 * Bogus now throws exceptions for locales it doesn't recognize. Improves developer experience.
 * New extension method `.ToBogusLocale()` on `System.Globalization.CultureInfo` to help translate from **.NET** locale codes to **Bogus** locale codes.
 
-## v22.0.3 
+## v22.0.3
+Release Date: 2018-02-27
+ 
 * Generate more realistic Bitcoin addresses.
 * New extension method `Faker<T>.GenerateBetween(min, max)` that generates N objects between `min` and `max`. Located in `Bogus.Extensions`. N should be considered non-deterministic but technically depends on the parameters each time this extension method was called. 
 * Added `Lorem.Paragraphs(min, max)` overload.
